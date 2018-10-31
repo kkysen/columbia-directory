@@ -3,6 +3,8 @@ package sen.khyber.columbia.directory
 import okhttp3.OkHttpClient
 import org.litote.kmongo.async.KMongo
 import org.openqa.selenium.WebDriver
+import sen.khyber.io.data.Data
+import sen.khyber.io.data.data
 import java.io.Closeable
 import java.util.logging.Logger
 
@@ -11,7 +13,15 @@ class ColumbiaDirectory(
         dbConnectionUrl: String = "mongodb://localhost:27017/CUDirectory"
 ) : Closeable {
     
-    data class FetchContext(val logger: Logger, val httpClient: OkHttpClient, val webDriver: WebDriver)
+    data class FetchContext(
+            val logger: Logger,
+            val httpClient: OkHttpClient,
+            val webDriver: WebDriver
+    ) : Closeable {
+        
+        override fun close() = webDriver.close()
+        
+    }
     
     private val dbClient = KMongo.createClient(dbConnectionUrl)
     private val db = dbClient.getDatabase("ColumbiaDirectory")
@@ -20,8 +30,6 @@ class ColumbiaDirectory(
     val persons: Data<Person>
     
     init {
-        // TODO include logger in fetchContext
-        
         // expose as Data, but call DependentData.map() internally
         unis = data(db, fetchContext, ::fetchUnis)
         persons = unis.map(::fetchPersons) { it.uni }
@@ -41,7 +49,6 @@ fun main() {
 //        it.unis.flow().subscribe { println(it) }
 //        it.persons.flow().subscribe { println(it) }
 //    }
-
 
 
 }

@@ -44,6 +44,7 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib", kotlin_version))
+    compile("org.jetbrains.kotlin:kotlin-reflect:1.3.0")
     testCompile("junit", "junit", "4.12")
     compile("io.reactivex.rxjava2:rxkotlin:$rx_kotlin_version")
     compile("org.jsoup:jsoup:1.11.3")
